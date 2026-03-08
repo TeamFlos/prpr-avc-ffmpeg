@@ -20,19 +20,51 @@ extra_ldflags = "-arch arm64"
 name = "aarch64-apple-ios"
 os = "macos-latest"
 enabled = false
-note = "Requires iOS SDK sysroot and cross-compile flags."
-env = { CC = "clang", CXX = "clang++" }
+note = "Requires Xcode and iOS SDK."
+env = { CC = "xcrun -sdk iphoneos clang", CXX = "xcrun -sdk iphoneos clang++" }
 configure = ["--arch=arm64", "--target-os=darwin", "--enable-cross-compile"]
-extra_cflags = ""
-extra_ldflags = ""
+extra_cflags = "-miphoneos-version-min=9.0"
+extra_ldflags = "-miphoneos-version-min=9.0"
+
+[[targets]]
+name = "aarch64-apple-ios-sim"
+os = "macos-latest"
+enabled = false
+note = "Requires Xcode and iOS simulator SDK."
+env = { CC = "xcrun -sdk iphonesimulator clang", CXX = "xcrun -sdk iphonesimulator clang++" }
+configure = [
+  "--arch=arm64",
+  "--target-os=ios-sim",
+  "--enable-cross-compile",
+  "--disable-videotoolbox",
+]
+extra_cflags = "-mios-simulator-version-min=9.0"
+extra_ldflags = "-mios-simulator-version-min=9.0"
 
 [[targets]]
 name = "aarch64-unknown-linux-ohos"
 os = "ubuntu-latest"
 enabled = false
-note = "Requires HarmonyOS toolchain setup."
-configure = ["--arch=aarch64", "--target-os=linux", "--enable-cross-compile"]
-extra_cflags = ""
+note = "Requires OpenHarmony SDK; set OHOS_SDK if not at the default path."
+env = { OHOS_SDK = "/ohos_sdk/command-line-tools/sdk/default/openharmony", CPU_MARCH = "armv8-a", CC = "${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang", LD = "${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang", STRIP = "${OHOS_SDK}/native/llvm/bin/llvm-strip" }
+configure = [
+  "--arch=aarch64",
+  "--target-os=linux",
+  "--cpu=armv8-a",
+  "--enable-cross-compile",
+  "--enable-static",
+  "--disable-htmlpages",
+  "--disable-optimizations",
+  "--disable-asm",
+  "--disable-x86asm",
+  "--disable-stripping",
+  "--cc=${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang",
+  "--ld=${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang",
+  "--strip=${OHOS_SDK}/native/llvm/bin/llvm-strip",
+  "--sysroot=${OHOS_SDK}/native/sysroot",
+  "--cross-prefix=${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-",
+]
+extra_cflags = "-march=${CPU_MARCH} -Os -fpic"
 extra_ldflags = ""
 
 [[targets]]

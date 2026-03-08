@@ -2,18 +2,25 @@ rev_file = "FFMPEG_REV"
 archive_url_template = "https://github.com/FFmpeg/FFmpeg/archive/{rev}.tar.gz"
 sha256 = ""
 configure_common = [
+  "--disable-bzlib",
   "--disable-debug",
   "--disable-doc",
   "--disable-programs",
   "--disable-shared",
+  "--disable-vulkan",
   "--enable-static",
   "--disable-everything",
-  "--enable-decoder=h264",
-  "--enable-decoder=aac",
-  "--enable-decoder=aac_latm",
-  "--enable-decoder=flac",
-  "--enable-decoder=mp3",
-  "--enable-decoder=vorbis",
+  "--enable-libvorbis",
+  "--enable-decoder=h264,aac,aac_latm,flac,mp3,wav,libvorbis,vorbis",
+  "--enable-encoder=h264,rawvideo",
+  "--enable-demuxer=h264,aac,flv,mov,mpegts,flac,wav,mp3,matroska",
+  "--enable-muxer=h264,adts,rawvideo,flac,mp3,wav,matroska",
+  "--enable-parser=h264",
+  "--enable-protocol=file,pipe",
+  "--enable-bsf=h264_mp4toannexb",
+  "--enable-swscale",
+  "--enable-swscale-alpha",
+  "--enable-filter=scale",
 ]
 package_libs = [
   "libavcodec.a",

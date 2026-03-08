@@ -46,3 +46,5 @@ python3 scripts/build-ffmpeg.py <target>
 ## 环境要求
 
 - Python 3.11+（用于读取 TOML 配置）
+- macOS/iOS 相关 target 需要安装 Xcode（含 Command Line Tools），并保证 `xcrun` 可用
+- HarmonyOS 相关 target 需要 OpenHarmony SDK，必要时通过 `OHOS_SDK` 指定路径

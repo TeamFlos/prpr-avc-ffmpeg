@@ -41,6 +41,26 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
+      - name: Install build deps (ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nasm yasm libvorbis-dev
+
+      - name: Install build deps (macos)
+        if: runner.os == 'macOS'
+        run: |
+          brew install libvorbis
+
+      - name: Select Xcode (iOS targets)
+        if: runner.os == 'macOS' && (matrix.target == 'aarch64-apple-ios' || matrix.target == 'aarch64-apple-ios-sim')
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-path
+          xcrun --sdk iphonesimulator --show-sdk-path
+
       - name: Build FFmpeg
         run: python3 scripts/build-ffmpeg.py ${{ matrix.target }}
       - name: Upload artifact

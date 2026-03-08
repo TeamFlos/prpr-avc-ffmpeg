@@ -46,3 +46,5 @@ Some platforms (for example Windows MSVC) output `.lib`. You can override the de
 ## Requirements
 
 - Python 3.11+ (for TOML support)
+- macOS/iOS targets require Xcode (Command Line Tools) with `xcrun` available
+- HarmonyOS targets require the OpenHarmony SDK; set `OHOS_SDK` if needed

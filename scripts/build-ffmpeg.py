@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import os
+import re
 import shutil
 import subprocess
 import tarfile
@@ -55,6 +56,21 @@ def extract(tar_path: Path, dest_dir: Path) -> Path:
 def run(cmd: list[str], cwd: Path | None = None, env: dict | None = None) -> None:
     print(f"Running: {' '.join(cmd)}")
     subprocess.run(cmd, cwd=cwd, env=env, check=True)
+
+
+VAR_PATTERN = re.compile(r"\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)")
+
+
+def expand_vars(value: str, env: dict[str, str]) -> str:
+    def repl(match: re.Match[str]) -> str:
+        key = match.group(1) or match.group(2)
+        return env.get(key, match.group(0))
+
+    return VAR_PATTERN.sub(repl, value)
+
+
+def expand_list(items: list[str], env: dict[str, str]) -> list[str]:
+    return [expand_vars(item, env) for item in items]
 
 
 def read_rev(root: Path, ffmpeg_cfg: dict) -> str:
@@ -120,18 +136,22 @@ def main() -> int:
     install_dir = build_root / "install"
     install_dir.mkdir(parents=True, exist_ok=True)
 
-    common_flags = ffmpeg_cfg.get("configure_common", [])
-    target_flags = target_cfg.get("configure", [])
-    extra_flags = target_cfg.get("extra_configure", [])
+    env = os.environ.copy()
+    raw_env = target_cfg.get("env") or {}
+    for key, value in raw_env.items():
+        env[key] = str(value)
+    for key, value in raw_env.items():
+        env[key] = expand_vars(str(value), env)
+
+    common_flags = expand_list(ffmpeg_cfg.get("configure_common", []), env)
+    target_flags = expand_list(target_cfg.get("configure", []), env)
+    extra_flags = expand_list(target_cfg.get("extra_configure", []), env)
     configure_flags = (
         common_flags + target_flags + extra_flags + [f"--prefix={install_dir}"]
     )
 
-    env = os.environ.copy()
-    for key, value in (target_cfg.get("env") or {}).items():
-        env[key] = value
-    extra_cflags = target_cfg.get("extra_cflags", "")
-    extra_ldflags = target_cfg.get("extra_ldflags", "")
+    extra_cflags = expand_vars(target_cfg.get("extra_cflags", ""), env)
+    extra_ldflags = expand_vars(target_cfg.get("extra_ldflags", ""), env)
     if extra_cflags:
         env["CFLAGS"] = f"{env.get('CFLAGS', '')} {extra_cflags}".strip()
     if extra_ldflags:
