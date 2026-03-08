@@ -44,9 +44,9 @@ extra_ldflags = "-mios-simulator-version-min=9.0"
 [[targets]]
 name = "aarch64-unknown-linux-ohos"
 os = "ubuntu-latest"
-enabled = false
+enabled = true
 note = "Requires OpenHarmony SDK; set OHOS_SDK if not at the default path."
-env = { OHOS_SDK = "/ohos_sdk/command-line-tools/sdk/default/openharmony", CPU_MARCH = "armv8-a", CC = "${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang", LD = "${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang", STRIP = "${OHOS_SDK}/native/llvm/bin/llvm-strip" }
+env = { CPU_MARCH = "armv8-a", CC = "${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang", LD = "${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang", STRIP = "${OHOS_SDK}/native/llvm/bin/llvm-strip" }
 configure = [
   "--arch=aarch64",
   "--target-os=linux",
@@ -58,6 +58,8 @@ configure = [
   "--disable-asm",
   "--disable-x86asm",
   "--disable-stripping",
+  "--disable-libvorbis",
+  "--disable-decoder=libvorbis",
   "--cc=${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang",
   "--ld=${OHOS_SDK}/native/llvm/bin/aarch64-linux-ohos-clang",
   "--strip=${OHOS_SDK}/native/llvm/bin/llvm-strip",
