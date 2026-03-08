@@ -19,7 +19,7 @@ extra_ldflags = "-arch arm64"
 [[targets]]
 name = "aarch64-apple-ios"
 os = "macos-latest"
-enabled = false
+enabled = true
 note = "Requires Xcode and iOS SDK."
 env = { CC = "xcrun -sdk iphoneos clang", CXX = "xcrun -sdk iphoneos clang++" }
 configure = ["--arch=arm64", "--target-os=darwin", "--enable-cross-compile"]
@@ -29,7 +29,7 @@ extra_ldflags = "-miphoneos-version-min=9.0"
 [[targets]]
 name = "aarch64-apple-ios-sim"
 os = "macos-latest"
-enabled = false
+enabled = true
 note = "Requires Xcode and iOS simulator SDK."
 env = { CC = "xcrun -sdk iphonesimulator clang", CXX = "xcrun -sdk iphonesimulator clang++" }
 configure = [

@@ -46,5 +46,7 @@ Some platforms (for example Windows MSVC) output `.lib`. You can override the de
 ## Requirements
 
 - Python 3.11+ (for TOML support)
+- Linux targets need `gcc/g++`, `make`, `pkg-config`, `nasm`, `yasm`, `libvorbis-dev`
+- macOS targets need `brew install pkg-config libvorbis`
 - macOS/iOS targets require Xcode (Command Line Tools) with `xcrun` available
 - HarmonyOS targets require the OpenHarmony SDK; set `OHOS_SDK` if needed
