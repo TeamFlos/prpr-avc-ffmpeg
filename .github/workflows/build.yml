@@ -62,14 +62,14 @@ jobs:
           xcrun --sdk iphonesimulator --show-sdk-path
 
       - name: Setup OpenHarmony SDK
-        if: runner.os == 'ohos'
+        if: contains(matrix.target, 'ohos')
         uses: openharmony-rs/setup-ohos-sdk@v0.2
         with:
           version: '6.0'
           components: 'native'
 
       - name: Set OHOS_SDK env
-        if: runner.os == 'ohos'
+        if: contains(matrix.target, 'ohos')
         run: echo "OHOS_SDK=$OHOS_BASE_SDK_HOME" >> "$GITHUB_ENV"
 
       - name: Build FFmpeg
