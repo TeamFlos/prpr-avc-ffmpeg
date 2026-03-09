@@ -4,6 +4,8 @@
 
 这个仓库用于构建固定版本的 FFmpeg 静态库，便于在 prpr/Phira 相关项目中复用（例如主仓库只需要解压到 `prpr-avc/static-lib/<target>`）。
 
+FFmpeg 源码以 git submodule 形式固定在 `FFmpeg/`，CI 会自动拉取对应版本。
+
 ## 功能概览
 
 - 多 target 构建（target 采用 Rust 三元组命名）
@@ -13,10 +15,16 @@
 
 ## 快速开始
 
-1. 设置版本：修改 `FFMPEG_REV`
+1. 如需更新 FFmpeg 版本，更新 `FFmpeg` submodule 指向的 commit
 2. 设置通用参数：修改 `config/ffmpeg.toml`
 3. 配置 target：修改 `config/targets.toml`
-4. 本地构建：
+4. 如需本地构建，先初始化 submodule：
+
+```bash
+git submodule update --init FFmpeg
+```
+
+5. 构建：
 
 ```bash
 python3 scripts/build-ffmpeg.py <target>
@@ -41,6 +49,7 @@ python3 scripts/build-ffmpeg.py <target>
 ## CI 与发布
 
 - `config/targets.toml` 里 `enabled = true` 的 target 会进入 matrix
+- CI checkout 会自动初始化 `FFmpeg` submodule
 - 推送任意 tag 会触发构建并将 `{target}.tar.gz` 上传到 Release
 
 ## 环境要求

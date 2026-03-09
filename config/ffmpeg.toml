@@ -1,6 +1,4 @@
-rev_file = "FFMPEG_REV"
-archive_url_template = "https://github.com/FFmpeg/FFmpeg/archive/{rev}.tar.gz"
-sha256 = ""
+source_dir = "FFmpeg"
 configure_common = [
   "--disable-bzlib",
   "--disable-debug",

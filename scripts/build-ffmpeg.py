@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 import argparse
-import hashlib
 import os
 import re
 import shutil
 import subprocess
 import tarfile
-import urllib.request
 from pathlib import Path
 import tomllib
 
@@ -19,38 +17,6 @@ def load_toml(path: Path) -> dict:
         raise SystemExit(f"config not found: {path}")
     except tomllib.TOMLDecodeError as exc:
         raise SystemExit(f"invalid toml in {path}: {exc}")
-
-
-def download(url: str, dest: Path) -> None:
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    if dest.exists():
-        return
-    print(f"Downloading {url}")
-    with urllib.request.urlopen(url) as response, dest.open("wb") as out:
-        shutil.copyfileobj(response, out)
-
-
-def verify_sha256(path: Path, expected: str) -> None:
-    if not expected:
-        return
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    actual = digest.hexdigest()
-    if actual.lower() != expected.lower():
-        raise SystemExit(f"sha256 mismatch: expected {expected}, got {actual}")
-
-
-def extract(tar_path: Path, dest_dir: Path) -> Path:
-    dest_dir.mkdir(parents=True, exist_ok=True)
-    with tarfile.open(tar_path, "r:*") as tar:
-        tar.extractall(dest_dir)
-    entries = [p for p in dest_dir.iterdir() if p.is_dir()]
-    for entry in entries:
-        if (entry / "configure").exists():
-            return entry
-    raise SystemExit("configure script not found after extraction")
 
 
 def run(cmd: list[str], cwd: Path | None = None, env: dict | None = None) -> None:
@@ -73,25 +39,26 @@ def expand_list(items: list[str], env: dict[str, str]) -> list[str]:
     return [expand_vars(item, env) for item in items]
 
 
-def read_rev(root: Path, ffmpeg_cfg: dict) -> str:
-    rev = ffmpeg_cfg.get("rev", "")
-    rev_file = ffmpeg_cfg.get("rev_file", "")
-    if rev_file:
-        rev_path = root / rev_file
-        if rev_path.exists():
-            rev = rev_path.read_text().strip()
-    return rev
+def resolve_source_dir(root: Path, ffmpeg_cfg: dict) -> Path:
+    source_dir = root / str(ffmpeg_cfg.get("source_dir", "FFmpeg"))
+    if not source_dir.exists():
+        raise SystemExit(
+            f"FFmpeg source not found: {source_dir}. "
+            "Initialize the FFmpeg submodule before building locally."
+        )
+    if not (source_dir / "configure").exists():
+        raise SystemExit(
+            f"FFmpeg source is not initialized in {source_dir}. "
+            "Run `git submodule update --init FFmpeg` before building locally."
+        )
+    return source_dir
 
 
-def build_url(root: Path, ffmpeg_cfg: dict) -> str:
-    url = ffmpeg_cfg.get("url", "")
-    if url:
-        return url
-    rev = read_rev(root, ffmpeg_cfg)
-    template = ffmpeg_cfg.get("archive_url_template", "")
-    if template and rev:
-        return template.format(rev=rev)
-    raise SystemExit("ffmpeg.toml must include url or archive_url_template with rev")
+def prepare_source_dir(source_dir: Path, dest_dir: Path) -> Path:
+    if dest_dir.exists():
+        shutil.rmtree(dest_dir)
+    shutil.copytree(source_dir, dest_dir, ignore=shutil.ignore_patterns(".git"))
+    return dest_dir
 
 
 def main() -> int:
@@ -115,23 +82,12 @@ def main() -> int:
         available = [t.get("name") for t in targets_cfg.get("targets", [])]
         raise SystemExit(f"target not found: {target_name}. available: {available}")
 
-    url = build_url(root, ffmpeg_cfg)
-    rev = read_rev(root, ffmpeg_cfg)
-    if rev:
-        print(f"Using FFmpeg rev {rev}")
-
-    tar_name = Path(url).name
-    downloads_dir = root / "downloads"
-    tar_path = downloads_dir / tar_name
-    download(url, tar_path)
-    verify_sha256(tar_path, ffmpeg_cfg.get("sha256", ""))
+    source_root = resolve_source_dir(root, ffmpeg_cfg)
+    print(f"Using FFmpeg source from {source_root}")
 
     build_root = root / "build" / target_name
     src_dir = build_root / "src"
-    if src_dir.exists():
-        shutil.rmtree(src_dir)
-    src_dir.mkdir(parents=True, exist_ok=True)
-    source_dir = extract(tar_path, src_dir)
+    source_dir = prepare_source_dir(source_root, src_dir)
 
     install_dir = build_root / "install"
     install_dir.mkdir(parents=True, exist_ok=True)

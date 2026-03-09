@@ -4,6 +4,8 @@
 
 This repository builds a pinned FFmpeg revision into static libraries for reuse in prpr/Phira-related projects (for example, the main repo can extract to `prpr-avc/static-lib/<target>`).
 
+FFmpeg source is pinned as the `FFmpeg/` git submodule, and CI checks it out automatically.
+
 ## Highlights
 
 - Multi-target builds (targets use Rust-style triples)
@@ -13,10 +15,16 @@ This repository builds a pinned FFmpeg revision into static libraries for reuse 
 
 ## Quick Start
 
-1. Set the revision in `FFMPEG_REV`
+1. To update FFmpeg, move the `FFmpeg` submodule to a new commit
 2. Adjust common options in `config/ffmpeg.toml`
 3. Configure targets in `config/targets.toml`
-4. Build locally:
+4. If you want a local build, initialize the submodule first:
+
+```bash
+git submodule update --init FFmpeg
+```
+
+5. Build:
 
 ```bash
 python3 scripts/build-ffmpeg.py <target>
@@ -41,6 +49,7 @@ Some platforms (for example Windows MSVC) output `.lib`. You can override the de
 ## CI and Releases
 
 - Only targets with `enabled = true` in `config/targets.toml` enter the matrix
+- CI checkout automatically initializes the `FFmpeg` submodule
 - Pushing any tag triggers builds and uploads `{target}.tar.gz` to the Release
 
 ## Requirements
