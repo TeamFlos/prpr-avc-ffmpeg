@@ -28,7 +28,7 @@ name = "aarch64-apple-ios"
 os = "macos-latest"
 enabled = true
 note = "Requires Xcode and iOS SDK."
-env = { CC = "xcrun -sdk iphoneos clang", CXX = "xcrun -sdk iphoneos clang++", IOS_SDK = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk" }
+env = { CC = "xcrun -sdk iphoneos clang", CXX = "xcrun -sdk iphoneos clang++", AS = "xcrun -sdk iphoneos clang", IOS_SDK = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk" }
 configure = ["--arch=arm64", "--target-os=darwin", "--enable-cross-compile"]
 extra_configure = ["--disable-videotoolbox", "--sysroot=${IOS_SDK}"]
 extra_cflags = "-isysroot ${IOS_SDK} -miphoneos-version-min=9.0"
@@ -39,7 +39,7 @@ name = "aarch64-apple-ios-sim"
 os = "macos-latest"
 enabled = true
 note = "Requires Xcode and iOS simulator SDK."
-env = { CC = "xcrun -sdk iphonesimulator clang", CXX = "xcrun -sdk iphonesimulator clang++", IOS_SIM_SDK = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk" }
+env = { CC = "xcrun -sdk iphonesimulator clang", CXX = "xcrun -sdk iphonesimulator clang++", AS = "xcrun -sdk iphonesimulator clang", IOS_SIM_SDK = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk" }
 configure = [
   "--arch=arm64",
   "--target-os=darwin",
