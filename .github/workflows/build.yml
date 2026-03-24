@@ -68,8 +68,15 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           update: true
-          install: make pkg-config diffutils yasm
+          install: make pkg-config diffutils yasm perl
           path-type: inherit
+
+      - name: Install gas-preprocessor for ARM64 MSVC
+        if: runner.os == 'Windows' && contains(matrix.target, 'aarch64')
+        shell: msys2 {0}
+        run: |
+          curl -L https://raw.githubusercontent.com/FFmpeg/gas-preprocessor/master/gas-preprocessor.pl -o /usr/bin/gas-preprocessor.pl
+          chmod +x /usr/bin/gas-preprocessor.pl
 
       - name: Select Xcode (iOS targets)
         if: runner.os == 'macOS' && (matrix.target == 'aarch64-apple-ios' || matrix.target == 'aarch64-apple-ios-sim')

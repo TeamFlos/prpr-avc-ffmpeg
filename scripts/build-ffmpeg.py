@@ -119,7 +119,6 @@ def main() -> int:
         configure_cmd = ["sh", "./configure", *configure_flags]
         
     run(configure_cmd, cwd=source_dir, env=env)
-    run(["./configure", *configure_flags], cwd=source_dir, env=env)
 
     jobs = int(ffmpeg_cfg.get("make_jobs", 0) or 0)
     if jobs <= 0:
