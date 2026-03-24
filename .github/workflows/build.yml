@@ -57,6 +57,20 @@ jobs:
         run: |
           brew install pkg-config libvorbis
 
+      - name: Setup MSVC
+        if: runner.os == 'Windows' && contains(matrix.target, 'msvc')
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ contains(matrix.target, 'aarch64') && 'amd64_arm64' || 'amd64' }}
+
+      - name: Setup MSYS2 (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: make pkg-config diffutils yasm
+          path-type: inherit
+
       - name: Select Xcode (iOS targets)
         if: runner.os == 'macOS' && (matrix.target == 'aarch64-apple-ios' || matrix.target == 'aarch64-apple-ios-sim')
         run: |

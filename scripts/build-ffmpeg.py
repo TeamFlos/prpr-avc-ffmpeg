@@ -114,6 +114,11 @@ def main() -> int:
     if extra_ldflags:
         env["LDFLAGS"] = f"{env.get('LDFLAGS', '')} {extra_ldflags}".strip()
 
+    configure_cmd = ["./configure", *configure_flags]
+    if os.name == "nt":
+        configure_cmd = ["sh", "./configure", *configure_flags]
+        
+    run(configure_cmd, cwd=source_dir, env=env)
     run(["./configure", *configure_flags], cwd=source_dir, env=env)
 
     jobs = int(ffmpeg_cfg.get("make_jobs", 0) or 0)
