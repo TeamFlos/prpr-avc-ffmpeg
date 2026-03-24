@@ -44,8 +44,6 @@ Default layout is a flat list of static libraries (`package_layout = "flat"`):
 
 If you need `<target>/lib*.a`, set `package_layout` to `target-dir` in `config/ffmpeg.toml`.
 
-Some platforms (for example Windows MSVC) output `.lib`. You can override the default list by setting `package_libs` per target in `config/targets.toml`.
-
 ## CI and Releases
 
 - Only targets with `enabled = true` in `config/targets.toml` enter the matrix

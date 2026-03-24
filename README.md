@@ -44,8 +44,6 @@ python3 scripts/build-ffmpeg.py <target>
 
 如需 `<target>/lib*.a` 结构，将 `config/ffmpeg.toml` 中的 `package_layout` 改为 `target-dir`。
 
-部分平台（如 Windows MSVC）会产出 `.lib`。可以在 `config/targets.toml` 的对应 target 中设置 `package_libs` 覆盖默认列表。
-
 ## CI 与发布
 
 - `config/targets.toml` 里 `enabled = true` 的 target 会进入 matrix

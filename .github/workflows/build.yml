@@ -57,6 +57,27 @@ jobs:
         run: |
           brew install pkg-config libvorbis
 
+      - name: Setup MSVC (Windows)
+        if: runner.os == 'Windows' && contains(matrix.target, 'msvc')
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ contains(matrix.target, 'aarch64') && 'amd64_arm64' || 'amd64' }}
+
+      - name: Setup MSYS2 (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: make pkg-config diffutils yasm perl gawk
+          path-type: inherit
+
+      - name: Install gas-preprocessor for ARM64 MSVC
+        if: runner.os == 'Windows' && contains(matrix.target, 'aarch64')
+        shell: msys2 {0}
+        run: |
+          curl -L https://raw.githubusercontent.com/FFmpeg/gas-preprocessor/master/gas-preprocessor.pl -o /usr/bin/gas-preprocessor.pl
+          chmod +x /usr/bin/gas-preprocessor.pl
+
       - name: Select Xcode (iOS targets)
         if: runner.os == 'macOS' && (matrix.target == 'aarch64-apple-ios' || matrix.target == 'aarch64-apple-ios-sim')
         run: |
@@ -76,13 +97,21 @@ jobs:
         if: contains(matrix.target, 'ohos')
         run: echo "OHOS_SDK=$OHOS_BASE_SDK_HOME" >> "$GITHUB_ENV"
 
-      - name: Build FFmpeg
+      - name: Build FFmpeg (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
         run: python3 scripts/build-ffmpeg.py ${{ matrix.target }}
+
+      - name: Build FFmpeg (Unix)
+        if: runner.os != 'Windows'
+        run: python3 scripts/build-ffmpeg.py ${{ matrix.target }}
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}.tar.gz
           path: dist/${{ matrix.target }}.tar.gz
+          
       - name: Upload release asset
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
