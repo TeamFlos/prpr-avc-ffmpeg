@@ -109,13 +109,6 @@ os = "windows-latest"
 enabled = true
 note = "Requires MSVC toolchain and FFmpeg msvc flags."
 configure = ["--arch=x86_64", "--target-os=win64", "--toolchain=msvc"]
-package_libs = [
-  "avcodec.lib",
-  "avformat.lib",
-  "avutil.lib",
-  "swresample.lib",
-  "swscale.lib",
-]
 extra_cflags = ""
 extra_ldflags = ""
 
@@ -129,13 +122,6 @@ configure = [
   "--target-os=win64",
   "--toolchain=msvc",
   "--enable-cross-compile"
-]
-package_libs = [
-  "avcodec.lib",
-  "avformat.lib",
-  "avutil.lib",
-  "swresample.lib",
-  "swscale.lib",
 ]
 extra_cflags = ""
 extra_ldflags = ""
