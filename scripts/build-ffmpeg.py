@@ -103,8 +103,15 @@ def main() -> int:
     common_flags = expand_list(ffmpeg_cfg.get("configure_common", []), env)
     target_flags = expand_list(target_cfg.get("configure", []), env)
     extra_flags = expand_list(target_cfg.get("extra_configure", []), env)
+    
+    prefix_path = str(install_dir)
+    if os.name == "nt":
+        prefix_path = prefix_path.replace("\\", "/")
+        if ":" in prefix_path:
+            drive, path = prefix_path.split(":", 1)
+            prefix_path = f"/{drive.lower()}{path}"
     configure_flags = (
-        common_flags + target_flags + extra_flags + [f"--prefix={install_dir}"]
+        common_flags + target_flags + extra_flags + [f"--prefix={prefix_path}"]
     )
 
     extra_cflags = expand_vars(target_cfg.get("extra_cflags", ""), env)
