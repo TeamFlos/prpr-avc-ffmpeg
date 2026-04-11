@@ -59,7 +59,7 @@ jobs:
       - name: Install build deps (macos)
         if: runner.os == 'macOS'
         run: |
-          brew install pkg-config libvorbis
+          brew install pkg-config libvorbis nasm
 
       - name: Setup MSVC (Windows)
         if: runner.os == 'Windows' && contains(matrix.target, 'msvc')
