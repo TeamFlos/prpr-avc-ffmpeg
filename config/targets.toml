@@ -39,6 +39,15 @@ extra_cflags = "-arch arm64"
 extra_ldflags = "-arch arm64"
 
 [[targets]]
+name = "x86_64-apple-darwin"
+os = "macos-latest"
+enabled = true
+env = { CC = "clang", CXX = "clang++" }
+configure = ["--arch=x86_64", "--cpu=x86_64", "--target-os=darwin", "--enable-cross-compile]
+extra_cflags = "-arch x86_64"
+extra_ldflags = "-arch x86_64"
+
+[[targets]]
 name = "aarch64-apple-ios"
 os = "macos-latest"
 enabled = true
