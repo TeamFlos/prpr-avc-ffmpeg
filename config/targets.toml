@@ -81,10 +81,7 @@ extra_ldflags = "-isysroot ${IOS_SIM_SDK} -mios-simulator-version-min=9.0"
 name = "x86_64-apple-darwin"
 os = "macos-latest"
 enabled = true
-env = { 
-  CC = "clang", 
-  CXX = "clang++" 
-}
+env = { CC = "clang", CXX = "clang++" }
 configure = [
   "--arch=x86_64", 
   "--cpu=x86_64", 
