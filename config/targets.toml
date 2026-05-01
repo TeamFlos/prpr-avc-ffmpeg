@@ -96,11 +96,7 @@ name = "x86_64-apple-ios"
 os = "macos-latest"
 enabled = true
 note = "Requires Xcode and iOS simulator SDK, builds under x86_64 translation."
-env = {
-  CC = "arch -x86_64 xcrun -sdk iphonesimulator clang",
-  CXX = "arch -x86_64 xcrun -sdk iphonesimulator clang++",
-  AS = "arch -x86_64 xcrun -sdk iphonesimulator clang",
-  IOS_SIM_SDK = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk"
+env = { CC = "arch -x86_64 xcrun -sdk iphonesimulator clang", CXX = "arch -x86_64 xcrun -sdk iphonesimulator clang++", AS = "arch -x86_64 xcrun -sdk iphonesimulator clang", IOS_SIM_SDK = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk"
 }
 configure = [
   "--arch=x86_64",
