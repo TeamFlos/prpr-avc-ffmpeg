@@ -78,6 +78,43 @@ extra_cflags = "-isysroot ${IOS_SIM_SDK} -mios-simulator-version-min=9.0"
 extra_ldflags = "-isysroot ${IOS_SIM_SDK} -mios-simulator-version-min=9.0"
 
 [[targets]]
+name = "x86_64-apple-darwin"
+os = "macos-latest"
+enabled = true
+env = { CC = "clang", CXX = "clang++" }
+configure = [
+  "--arch=x86_64", 
+  "--cpu=x86_64", 
+  "--target-os=darwin", 
+  "--enable-cross-compile"
+]
+extra_cflags = "-arch x86_64"
+extra_ldflags = "-arch x86_64"
+
+[[targets]]
+name = "x86_64-apple-ios"
+os = "macos-latest"
+enabled = true
+note = "Requires Xcode and iOS simulator SDK, builds under x86_64 translation."
+env = { CC = "arch -x86_64 xcrun -sdk iphonesimulator clang", CXX = "arch -x86_64 xcrun -sdk iphonesimulator clang++", AS = "arch -x86_64 xcrun -sdk iphonesimulator clang", IOS_SIM_SDK = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk"}
+configure = [
+  "--arch=x86_64",
+  "--target-os=darwin",
+  "--enable-cross-compile",
+  "--cc=${CC}",
+  "--cxx=${CXX}",
+  "--as=${CC}",
+  "--ld=${CC}",
+]
+extra_configure = [
+  "--disable-videotoolbox", 
+  "--sysroot=${IOS_SIM_SDK}"
+]
+extra_cflags = "-arch x86_64 -isysroot ${IOS_SIM_SDK} -mios-simulator-version-min=9.0"
+extra_ldflags = "-arch x86_64 -isysroot ${IOS_SIM_SDK} -mios-simulator-version-min=9.0"
+
+
+[[targets]]
 name = "aarch64-unknown-linux-ohos"
 os = "ubuntu-latest"
 enabled = true

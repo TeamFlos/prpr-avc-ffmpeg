@@ -59,7 +59,7 @@ jobs:
       - name: Install build deps (macos)
         if: runner.os == 'macOS'
         run: |
-          brew install pkg-config libvorbis
+          brew install pkg-config libvorbis nasm
 
       - name: Setup MSVC (Windows)
         if: runner.os == 'Windows' && contains(matrix.target, 'msvc')
@@ -89,7 +89,7 @@ jobs:
           echo "/tmp/llvm-mingw-20260324-ucrt-ubuntu-22.04-x86_64/bin" >> "$GITHUB_PATH"
 
       - name: Select Xcode (iOS targets)
-        if: runner.os == 'macOS' && (matrix.target == 'aarch64-apple-ios' || matrix.target == 'aarch64-apple-ios-sim')
+        if: runner.os == 'macOS' && (matrix.target == 'aarch64-apple-ios' || matrix.target == 'aarch64-apple-ios-sim' || matrix.target == 'x86_64-apple-ios')
         run: |
           sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
           xcodebuild -version
